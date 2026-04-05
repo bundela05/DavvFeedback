@@ -1,0 +1,102 @@
+to find tname,sname for a specific batch,course,sem
+
+db["teachers"].aggregate([
+  { $unwind: "$classes" },
+  {
+    $match: {
+      "classes.course": "M.tech-5yrs",
+      "classes.batch": "23-28",
+      "classes.sem": 6
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      tname: 1,
+      sname: "$classes.sname"
+    }
+  }
+])
+
+output format
+{
+  tname: 'shishir k shandilya',
+  sname: 'AI ethics'
+}
+{
+  tname: 'vandit sir',
+  sname: 'R programming'
+}
+{
+  tname: 'Rajat Sir',
+  sname: 'Data mining'
+}
+{
+  tname: 'khushi banger',
+  sname: 'Nosql'
+}
+
+// new aggrigation using lookups
+be in DavvFeedback database
+
+
+db.teachers.aggregate([
+  {
+    $lookup: {
+      from: "students",
+      localField: "classes.course",
+      foreignField: "course",
+      as: "filterData"
+    }
+  },
+  { $unwind: "$classes" },
+  { $unwind: "$filterData" },
+  {
+    $match: {
+      $expr: {
+        $and: [
+          { $eq: ["$classes.course", "$filterData.course"] },
+          { $eq: ["$classes.batch", "$filterData.batch"] },
+          { $eq: ["$classes.sem", "$filterData.sem"] }
+        ]
+      },
+      "filterData.enroll_id": "DE2302011"
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      tname: 1,
+      sname: "$classes.sname",
+      course: "$classes.course",
+      batch: "$classes.batch",
+      sem: "$classes.sem",
+      enroll_id: "$filterData.enroll_id"
+    }
+  },
+  {
+  $merge: {
+    into: "DavvFeedback",
+    on: ["_id"],
+    whenMatched: "merge",   // or "replace"
+    whenNotMatched: "insert"
+  }
+}
+])
+
+
+for update DavvFeedback
+
+db.feedback.updateOne(
+  { "_id": ObjectId("69ce63705e0281121bf0d12a") }, //of the document
+  { 
+    $set: { 
+      "feedback": {
+        "rating": 5,
+        "teaching_style": "Excellent",
+        "attendance_score": 90,
+        "comments": "Great insights into AI Ethics."
+      }
+    } 
+  }
+)
