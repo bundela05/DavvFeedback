@@ -83,7 +83,7 @@ const aggrFunc = async (enroll_id)=> {
     
 };
 
-//post request
+//post request api
 app.post("/api/students", async (req,res)=>{
     try{
         const {enroll_id, course, batch, sem }= req.body;
@@ -102,6 +102,28 @@ app.post("/api/students", async (req,res)=>{
             res.status(500).json({status:0,message:"error", err: err.message});
         }
     }
+})
+//feedback document schema
+const feedbackSchema = new mongoose.Schema({
+  "_id":{type: String },
+  "batch": {type: String },
+  "course": {type: String },
+  "enroll_id": {type: String },
+  "sem": {type: String },
+  "sname": {type: String },
+  "tname": {type: String }
+})
+const DavvFeedback = mongoose.model("DavvFeedback",feedbackSchema,"DavvFeedback")
+//get requset api
+
+
+app.get("/api/DavvFeedback/:enroll_id",async (req,res)=>{
+    const { enroll_id } = req.params;
+    let feeddata =await DavvFeedback.find({ enroll_id: enroll_id },{tname:1,sname:1,_id:0})
+    if (feeddata.length === 0) {
+            return res.status(404).json({ message: "No documents found with that enroll_id" });
+        }
+        res.status(200).json(feeddata);
 })
 
 //mongodb connection
