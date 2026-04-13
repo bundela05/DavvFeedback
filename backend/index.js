@@ -2,7 +2,10 @@ let express =require ("express")
 let mongoose = require ("mongoose")
 require("dotenv").config()
 
+const cors = require("cors");
 let app = express ()
+
+app.use(cors());
 app.use(express.json())
 
 // students collection schema
