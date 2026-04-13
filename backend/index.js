@@ -105,18 +105,39 @@ app.post("/api/students", async (req,res)=>{
 })
 //feedback document schema
 const feedbackSchema = new mongoose.Schema({
-  "_id":{type: String },
-  "batch": {type: String },
-  "course": {type: String },
-  "enroll_id": {type: String },
-  "sem": {type: String },
-  "sname": {type: String },
-  "tname": {type: String }
+    "_id": { type: String },
+    "batch": { type: String },
+    "course": { type: String },
+    "enroll_id": { type: String },
+    "sem": { type: String },
+    "sname": { type: String },
+    "tname": { type: String },
+    // The new nested feedback structure
+    "feedback": {
+            "conceptualClarity": Number,
+            "motivation": Number,
+            "communicationSkills": Number,
+            "regularityPunctuality": Number,
+            "subjectKnowledge": Number,
+            "practicalExamples": Number,
+            "interactionGuidance": Number,
+            "itSkills": Number,
+            "overallPerformance": Number,
+
+            "resultDeclaredTwoWeeks": String,
+            "adequateAssignments": String,
+            "recommendForSameSubject": String,
+            "recommendForOtherSubject": String,
+            "syllabusAdequacy": String,
+
+            "strengths": String,
+            "weaknesses": String,
+            "suggestions": String
+        }
 })
 const DavvFeedback = mongoose.model("DavvFeedback",feedbackSchema,"DavvFeedback")
+
 //get requset api
-
-
 app.get("/api/DavvFeedback/:enroll_id",async (req,res)=>{
     const { enroll_id } = req.params;
     let feeddata =await DavvFeedback.find({ enroll_id: enroll_id },{tname:1,sname:1,_id:0})
@@ -125,6 +146,31 @@ app.get("/api/DavvFeedback/:enroll_id",async (req,res)=>{
         }
         res.status(200).json(feeddata);
 })
+
+//update the DavvFeedback with feedback data
+app.patch("/api/submitFeedback/:id", async (req,res)=>{
+    try{
+        const {id} = req.params;
+        const updateDoc = await DavvFeedback.findByIdAndUpdate(
+            id,
+            {$set: {feedback: req.body}},
+            {new: true, runValidators: true}
+        );
+        if (!updateDoc){
+            return res.status(404).json({status:0,
+                message :"record was not found . ensure data was added"
+            })
+        }
+        res.status(200).json({
+            status:1,
+            message: "feedback succesfully recorded",
+            data: updateDoc
+        })
+
+    }catch (err) {
+        res.status(500).json({ status: 0, error: err.message });
+    }
+});
 
 //mongodb connection
 mongoose.connect(process.env.URL).then(()=>{
