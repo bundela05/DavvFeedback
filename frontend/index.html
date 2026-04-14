@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAVV Feedback System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 DAVV Feedback System</h1>
+            <p>Student Registration & Teacher Feedback Portal</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('register')">📝 Register Student</button>
+            <button class="tab" onclick="showTab('feedback')">✍️ Submit Feedback</button>
+            <button class="tab" onclick="showTab('view')">📊 View Feedback</button>
+        </div>
+
+        <!-- Register Student Tab -->
+        <div id="register" class="tab-content active">
+            <div id="registerAlert"></div>
+            <form id="studentForm">
+                <div class="form-group">
+                    <label for="enroll_id">Enrollment ID *</label>
+                    <input type="text" id="enroll_id" required placeholder="e.g., 2023001">
+                </div>
+                <div class="form-group">
+                    <label for="course">Course *</label>
+                    <select id="course" required>
+                        <option value="">Select Course</option>
+                        <option value="M.tech-5yrs">M.Tech 5 Years</option>
+                        <option value="M.Tech-2yrs">M.Tech 2 years</option>
+                        <!-- <option value="B.Sc">B.Sc</option> -->
+                        <option value="MSC">M.Sc</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="batch">Batch *</label>
+                    <input type="text" id="batch" required placeholder="e.g., 23-28">
+                </div>
+                <div class="form-group">
+                    <label for="sem">Semester *</label>
+                    <input type="text" id="sem" required placeholder="e.g., 6">
+                </div>
+                <button type="submit" class="btn" id="registerBtn">Register Student</button>
+            </form>
+        </div>
+
+        <!-- Submit Feedback Tab -->
+        <div id="feedback" class="tab-content">
+            <div id="feedbackAlert"></div>
+            <div class="form-group">
+                <label for="feedbackEnrollId">Enrollment ID *</label>
+                <input type="text" id="feedbackEnrollId" placeholder="Enter your enrollment ID">
+                <button type="button" class="btn load-btn" onclick="loadFeedbackForms()">Load My Feedback Forms</button>
+            </div>
+            <div id="feedbackForms" style="display: none;">
+                <form id="feedbackForm">
+                    <div id="teacherFeedbacks"></div>
+                    <button type="submit" class="btn" id="submitFeedbackBtn" style="display: none;">Submit All Feedback</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- View Feedback Tab -->
+        <div id="view" class="tab-content">
+            <div id="viewAlert"></div>
+            <div class="form-group">
+                <label for="viewEnrollId">Enrollment ID</label>
+                <input type="text" id="viewEnrollId" placeholder="Enter enrollment ID to view feedback">
+                <button type="button" class="btn load-btn" onclick="loadFeedbackData()">View Feedback</button>
+            </div>
+            <div id="feedbackResults"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

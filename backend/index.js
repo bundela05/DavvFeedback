@@ -5,7 +5,11 @@ require("dotenv").config()
 const cors = require("cors");
 let app = express ()
 
-app.use(cors());
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
 app.use(express.json())
 
 // students collection schema
@@ -143,7 +147,7 @@ const DavvFeedback = mongoose.model("DavvFeedback",feedbackSchema,"DavvFeedback"
 //get requset api
 app.get("/api/DavvFeedback/:enroll_id",async (req,res)=>{
     const { enroll_id } = req.params;
-    let feeddata =await DavvFeedback.find({ enroll_id: enroll_id },{tname:1,sname:1,_id:0})
+    let feeddata =await DavvFeedback.find({ enroll_id: enroll_id },{tname:1,sname:1,_id:1})
     if (feeddata.length === 0) {
             return res.status(404).json({ message: "No documents found with that enroll_id" });
         }
